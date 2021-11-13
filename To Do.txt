@@ -1,0 +1,36 @@
+## ML project
+
+# To do:
+
+Initialize github repository 
+
+1. Build a website (Check Streamlit)
+	- design a webpage (pages, specs,...)
+	- flask, html, css integration (The look)
+	- run it on a localhost
+
+2. Integrate backend for ML model predictions
+	- handle inputs/outputs
+	- check for graphs and visualization
+
+3. Data collection and preparation
+
+	* ETL (Extract, transform and load)
+			- Extraction (python)
+			- Transform (python)
+			- Load (SQL & python)
+	* EDA (Explanatory Data Analysis)/Descriptive analysis
+
+4. Build a model
+	- build model for prediciton
+	- build model for recomendation
+	- evaluate models
+	- save models
+
+5. Combine models and webpage
+	- combine functions such as train/test/predict
+	- create sort of dashboard for prediction (https://www.chartjs.org/)
+
+6. Dockerize the application
+
+7. Deploy the application on Amazon?
