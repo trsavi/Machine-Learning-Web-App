@@ -18,13 +18,16 @@ Initialize github repository
 	* ETL (Extract, transform and load)
 			- Extraction (python)
 			- Transform (python)
-			- Load (SQL & python)
+			- Load 
 	* EDA (Explanatory Data Analysis)/Descriptive analysis
 
 4. Build a model
 	- build model for prediciton
+    	* Encoding categorical variables
+    	* PCA analysis and dimension reduction
+    	* Try different models/algorithms
 	- build model for recomendation
-	- evaluate models
+	- evaluate models (R2 score, Mae and Mse)
 	- save models
 
 5. Combine models and webpage
@@ -33,4 +36,4 @@ Initialize github repository
 
 6. Dockerize the application
 
-7. Deploy the application on Amazon?
+7. Deploy the application on Amazon or Streamlit?

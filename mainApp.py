@@ -10,11 +10,8 @@ Author: Vukasin
 import streamlit as st
 
 st.title("Streamlit example")
-st.write(""" 
-         ## This is second header""")
          
-st.sidebar.write(""" 
-         ### This is second header""")
+st.sidebar.write(""" # Car specifications """)
 
 st.sidebar.selectbox("Select Brand", ("Mazda","Audi", "BMW"))
 
