@@ -12,6 +12,17 @@ from sklearn.metrics import mean_absolute_error
 
 # Importing dataset
 
-data = pd.read_csv('./Data/cleanedPolovni.csv')
+data = pd.read_csv('./Data/carsPolovni.csv')
 
-data.head()
+from sklearn.preprocessing import OneHotEncoder
+
+# create an object of the OneHotEncoder
+OHE = OneHotEncoder()
+OHE = OneHotEncoder(cols=['Brend',
+                             'Model',
+                             'Karoserija',
+                             'Gorivo'],use_cat_names=True)
+# encode the categorical variables
+data = OHE.fit_transform(data)
+
+print(data.info())
