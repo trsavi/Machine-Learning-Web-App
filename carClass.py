@@ -19,8 +19,8 @@ def get_models(brend):
 def get_car_types(model):
     return list(data[data['Model']==model]['Karoserija'].unique())
 
-def get_car_volume(model):
-    return sorted(list(data[data['Model']==model]['Kubikaza'].unique()))
+def get_car_volume(model, karoserija):
+    return sorted(list(data[(data['Model']==model) & (data['Karoserija']==karoserija)]['Kubikaza'].unique()))
 
 def get_fuel_type(model, karoserija):
     return list(data[(data['Model']==model) & (data['Karoserija']==karoserija)]['Gorivo'].unique())
