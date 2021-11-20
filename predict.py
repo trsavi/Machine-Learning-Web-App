@@ -9,6 +9,7 @@ Form after submitting car specifications
 
 import pandas as pd
 import numpy as np
+import random
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -20,8 +21,8 @@ import plotly.tools as tls
 
 import pickle
 
-df_enc = pd.read_csv("./Data/carsCleaned.csv")
-df_enc = df_enc.drop(columns='Cena')
+cars = pd.read_csv("./Data/carsCleaned.csv")
+df_enc = cars.drop(columns='Cena')
 df_enc = pd.get_dummies(df_enc)
 
 
@@ -44,3 +45,52 @@ def predict_price(*params):
     prediction = model.predict(value).astype(int)
     return prediction
     
+def recommend_car(car):
+    
+    mileage = car['Kilometraza']
+    year = car['Godiste']
+    volume = car['Kubikaza']
+    power = car['Snaga']
+    car_type =  car['Karoserija']
+    price = car['Cena']
+    
+    if car_type=='Limuzina ' or car_type=='Karavan ':
+        car_type=['Limuzina ', 'Karavan ']
+    elif car_type=='Dzip/SUV ':
+        car_type=['Dzip/SUV ', 'Karavan ']
+    elif car_type=='Monovolumen (MiniVan) ':
+        car_type=['Monovolumen (MiniVan) ']
+    else:
+        car_type = ['Hecbek ']
+    
+    mileage_high = mileage + 20000
+    mileage_low = mileage - 20000
+    
+    year_high = year + 1
+    year_low = year - 1
+    
+    volume_high = volume + volume*0.25
+    volume_low = volume -  volume*0.25
+    
+    power_high = power + power*0.25
+    power_low =  power - power*0.25
+    
+    price_high = price + price*0.1
+    price_low = price - price*0.1
+    
+    try:
+        df = cars[
+                  (cars['Godiste']<=year_high) & (cars['Godiste']>=year_low) 
+                  & (cars['Karoserija'].isin(car_type)) 
+                  & (cars['Kilometraza']<=mileage_high) & (cars['Kilometraza']>=mileage_low)
+                  & (cars['Kubikaza']>=volume_low) & (cars['Kubikaza']<=volume_high) 
+                  & (cars['Snaga']>=power_low) & (cars['Snaga']<=power_high)
+                  & (cars['Cena']>=price_low) & (cars['Cena']<=price_high)]
+        #(cars['Cena']>=price_low) & (cars['Cena']<=price_high)
+        
+        random_similar = df.sample(n=5, random_state=1)#.values.tolist()
+        
+        #print(random_similar)
+        return random_similar
+    except Exception as e:
+        print(e)
