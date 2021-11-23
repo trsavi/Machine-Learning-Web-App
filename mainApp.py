@@ -47,7 +47,7 @@ submit = st.sidebar.checkbox('Uporedi automobile')
 
 predicted_price = predict.predict_price([brand, model, year, car_type, volume, fuel, mileage, power])
 #st.write(predicted_price)
-st.header("Predviđena cena: {}  ±500 €".format(int(predicted_price[0])))
+st.header("Predviđena cena: {}€ ±5%".format(int(predicted_price[0])))
 ## Show similar cars 
 
 car = {'Brend' : brand,
