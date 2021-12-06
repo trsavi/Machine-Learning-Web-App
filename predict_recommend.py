@@ -21,13 +21,14 @@ import plotly.tools as tls
 import plotly.express as px
 import pickle
 
-cars = pd.read_csv("./Data/carsCleaned.csv")
+cars = pd.read_csv("./Data/usedCleaned20.csv")
 df_enc = cars.drop(columns='Cena')
 df_enc = pd.get_dummies(df_enc)
 
 
-model = pickle.load(open('ml_model', 'rb'))
-columns = ['Brend', 'Model','Godiste','Karoserija', 'Kubikaza', 'Gorivo', 'Kilometraza','Snaga']
+model = pickle.load(open('ml_model.pkl', 'rb'))
+columns = ['Marka', 'Model','Godiste','Kilometraza', 'Karoserija', 'Gorivo', 'Kubikaza','Snaga motora', 'EKM', 'Pogon',
+           'Menjac', 'Broj vrata', 'Boja', 'Materijal enterijera', 'Boja enterijera']
 
 def predict_price(*params):
     
@@ -50,7 +51,7 @@ def recommend_car(car):
     mileage = car['Kilometraza']
     year = car['Godiste']
     volume = car['Kubikaza']
-    power = car['Snaga']
+    power = car['Snaga motora']
     car_type =  car['Karoserija']
     price = car['Cena']
     
@@ -84,7 +85,7 @@ def recommend_car(car):
                   & (cars['Karoserija'].isin(car_type)) 
                   & (cars['Kilometraza']<=mileage_high) & (cars['Kilometraza']>=mileage_low)
                   & (cars['Kubikaza']>=volume_low) & (cars['Kubikaza']<=volume_high) 
-                  & (cars['Snaga']>=power_low) & (cars['Snaga']<=power_high)
+                  & (cars['Snaga motora']>=power_low) & (cars['Snaga motora']<=power_high)
                   & (cars['Cena']>=price_low) & (cars['Cena']<=price_high)]
         #(cars['Cena']>=price_low) & (cars['Cena']<=price_high)
         
