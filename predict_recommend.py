@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu Nov 18 21:08:46 2021
@@ -21,30 +22,53 @@ import plotly.tools as tls
 import plotly.express as px
 import pickle
 
-cars = pd.read_csv("./Data/usedCleaned20.csv")
+cars = pd.read_csv("./Data/usedCleaned21.csv")
 df_enc = cars.drop(columns='Cena')
 df_enc = pd.get_dummies(df_enc)
 
 
-model = pickle.load(open('ml_model.pkl', 'rb'))
-columns = ['Marka', 'Model','Godiste','Kilometraza', 'Karoserija', 'Gorivo', 'Kubikaza','Snaga motora', 'EKM', 'Pogon',
-           'Menjac', 'Broj vrata', 'Boja', 'Materijal enterijera', 'Boja enterijera']
+model = pickle.load(open('model_lgb21.pkl', 'rb'))
+columns = ['Marka', 'Model','Godiste','Kilometraza', 'Karoserija', 'Gorivo', 'Kubikaza','Snaga motora',  'Pogon',
+           'Menjac', 'Boja']
 
 def predict_price(*params):
+    parameters = params[0]
+    params = [[k] for k in parameters]
+    params_plus = [[k] for k in parameters]
+    params_minus = [[k] for k in parameters]
     
-    params = [[k] for k in params[0]]
+    #(params_plus)
+    params_plus[2][0] = int(params_plus[2][0]+1)
+    params_minus[2][0] = int(params_minus[2][0]-1)
+    #print(params_plus[2][0])
+    
     
     params = dict(zip(columns, params))
+    params_plus = dict(zip(columns, params_plus))
+    params_minus = dict(zip(columns, params_minus))
     
     df1 = pd.get_dummies(pd.DataFrame(params))
+    df2 = pd.get_dummies(pd.DataFrame(params_plus))
+    df3 = pd.get_dummies(pd.DataFrame(params_minus))
+    
     dummies_frame = df_enc
     df1 = df1.reindex(columns = dummies_frame.columns, fill_value=0)
+    df2 = df2.reindex(columns = dummies_frame.columns, fill_value=0)
+    df3 = df3.reindex(columns = dummies_frame.columns, fill_value=0)
     
     value = df1.iloc[0].values
+    value_p = df2.iloc[0].values
+    value_m = df3.iloc[0].values
+    
     value = np.array(value).reshape((1,-1))
+    value_p = np.array(value_p).reshape((1,-1))
+    value_m = np.array(value_m).reshape((1,-1))
     
     prediction = model.predict(value).astype(int)
-    return prediction
+    prediction_p = model.predict(value_p).astype(int)
+    prediction_m = model.predict(value_m).astype(int)
+    
+    return prediction, prediction_p, prediction_m
     
 def recommend_car(car):
     
@@ -55,17 +79,17 @@ def recommend_car(car):
     car_type =  car['Karoserija']
     price = car['Cena']
     
-    if car_type=='Limuzina ' or car_type=='Karavan ':
-        car_type=['Limuzina ', 'Karavan ']
-    elif car_type=='Dzip/SUV ':
-        car_type=['Dzip/SUV ', 'Karavan ']
-    elif car_type=='Monovolumen (MiniVan) ':
-        car_type=['Monovolumen (MiniVan) ']
+    if car_type=='Limuzina' or car_type=='Karavan':
+        car_type=['Limuzina', 'Karavan']
+    elif car_type=='Dzip/SUV':
+        car_type=['Dzip/SUV', 'Karavan']
+    elif car_type=='MiniVan':
+        car_type=['MiniVan']
     else:
-        car_type = ['Hecbek ']
+        car_type = ['Hecbek']
     
-    mileage_high = mileage + 20000
-    mileage_low = mileage - 20000
+    mileage_high = mileage + 10000
+    mileage_low = mileage - 10000
     
     year_high = year + 1
     year_low = year - 1
@@ -90,36 +114,52 @@ def recommend_car(car):
         #(cars['Cena']>=price_low) & (cars['Cena']<=price_high)
         
         random_similar = df.sample(n=5, random_state=1)#.values.tolist()
-        
-        #print(random_similar)
-        return random_similar
+        random_similar = random_similar[['Marka', 'Model', 'Godiste', 'Kilometraza', 'Gorivo', 'Kubikaza', 'Snaga motora', 'Cena']]
+        random_similar['Kubikaza'] = random_similar['Kubikaza'] .round(decimals=1)
+
+        if random_similar is not None:
+            return random_similar
+
     except Exception as e:
         print(e)
         
-def plot_avg(model_name):
+def plot_avg(car):
+    price = int(car['Cena'])
+    model_name = car['Model']
+    year = int(car['Godiste'])
     mean_price = cars[(cars['Model']==model_name)]
     fig = px.line(data_frame=mean_price.groupby(['Godiste'])['Cena'].mean().reset_index(), x="Godiste", y="Cena", title='Prosečna cena po godištu')
-
+    fig.add_scatter(x = [year], y = [price], name='Predviđena cena')
+    fig.update_layout(
+    xaxis_title="Godiste",
+    yaxis_title="Cena",
+    font=dict(
+        #family="Courier New",
+        size=15
+    ),
+    xaxis = dict(
+        tickmode = 'linear'
+    )
+    )
+    fig.update_traces(marker=dict(size=15))
     return fig
 
+def plot_predictd_years(previous, current, next_y, year):
+    prices = [previous, current, next_y]
+    years = [year-1, year, year+1]
+    #years = [int(k) for k in years]
+    fig = px.bar(x=years, y=prices, title='Predviđena cena za ±1 godinu sa istim parametrima')
+    fig.update_layout(
+    xaxis_title="Godiste",
+    yaxis_title="Cena",
+    font=dict(
+        #family="Courier New",
+        size=15
+    ),
+    xaxis = dict(
+        tickmode = 'linear',
+        tick0 = 1,
+    )
+    )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return fig

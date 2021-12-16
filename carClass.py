@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Wed Nov 17 19:42:00 2021
@@ -8,7 +9,7 @@ Created on Wed Nov 17 19:42:00 2021
 
 import pandas as pd
 
-data = pd.read_csv('./Data/usedCleaned20.csv')
+data = pd.read_csv('./Data/usedCleaned21.csv')
 
 print(data.columns)
 
@@ -28,6 +29,9 @@ def get_car_types(brend, model):
 def get_car_year(model):
     return int(data[data['Model']==model]['Godiste'].min()), int(data[data['Model']==model]['Godiste'].max())
 
+def get_car_mileage(model):
+    return int(data[data['Model']==model]['Kilometraza'].min()), int(data[data['Model']==model]['Kilometraza'].max())
+
 # Get car volume
 def get_car_volume(model, karoserija):
     return sorted(list(data[(data['Model']==model) & (data['Karoserija']==karoserija)]['Kubikaza'].unique()))
@@ -37,12 +41,9 @@ def get_fuel_type(model, karoserija):
     return list(data[(data['Model']==model) & (data['Karoserija']==karoserija)]['Gorivo'].unique())
 
 # Get engine power
-def get_engine_power(kubikaza):
-    return sorted(list(data[(data['Kubikaza']==kubikaza)]['Snaga motora'].unique()))
+def get_engine_power(model, kubikaza):
+    return sorted(list(data[(data['Model']==model) & (data['Kubikaza']==kubikaza)]['Snaga motora'].unique()))
 
-# Get engine emmision class
-def get_emmision_class():
-    return sorted(list(data['EKM'].unique()))
 
 # Get car drive system
 def get_drive(model, car_type):
@@ -52,18 +53,9 @@ def get_drive(model, car_type):
 def get_shift(model, car_type):
     return sorted(list(data[(data['Model']==model) & (data['Karoserija']==car_type)]['Menjac'].unique()))
 
-# Get number of doors
-def get_no_doors(model, car_type):
-    return sorted(list(data[(data['Model']==model) & (data['Karoserija']==car_type)]['Broj vrata'].unique()))
 
 # Get car colors
 def get_colors():
     return sorted(list(data['Boja'].unique()))
 
-# Get colors of enterior
-def get_enterior_color():
-    return sorted(list(data['Boja enterijera'].unique()))
-# Get materials
-def get_material():
-    return sorted(list(data['Materijal enterijera'].unique()))
-    
+
