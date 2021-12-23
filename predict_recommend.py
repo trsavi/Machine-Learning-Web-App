@@ -28,6 +28,11 @@ df_enc = pd.get_dummies(df_enc)
 
 
 model = pickle.load(open('model_lgb21.pkl', 'rb'))
+feature_importances = np.around((model.feature_importances_ / sum(model.feature_importances_)) * 100, 0)[:4]
+results = pd.DataFrame({'Features': list(df_enc.columns[:4]),
+                        'Importances': feature_importances})
+
+
 columns = ['Marka', 'Model','Godiste','Kilometraza', 'Karoserija', 'Gorivo', 'Kubikaza','Snaga motora',  'Pogon',
            'Menjac', 'Boja']
 
@@ -78,6 +83,7 @@ def recommend_car(car):
     power = car['Snaga motora']
     car_type =  car['Karoserija']
     price = car['Cena']
+    model = car['Model']
     
     if car_type=='Limuzina' or car_type=='Karavan':
         car_type=['Limuzina', 'Karavan']
@@ -88,20 +94,20 @@ def recommend_car(car):
     else:
         car_type = ['Hecbek']
     
-    mileage_high = mileage + 10000
-    mileage_low = mileage - 10000
+    mileage_high = mileage + 30000
+    mileage_low = mileage - 30000
     
-    year_high = year + 1
-    year_low = year - 1
+    year_high = year + 2
+    year_low = year - 2
     
-    volume_high = volume + volume*0.25
-    volume_low = volume -  volume*0.25
+    volume_high = volume + volume*0.20
+    volume_low = volume -  volume*0.20
     
     power_high = power + power*0.25
     power_low =  power - power*0.25
     
-    price_high = price + price*0.1
-    price_low = price - price*0.1
+    price_high = price + price*0.15
+    price_low = price - price*0.15
     
     try:
         df = cars[
@@ -110,46 +116,59 @@ def recommend_car(car):
                   & (cars['Kilometraza']<=mileage_high) & (cars['Kilometraza']>=mileage_low)
                   & (cars['Kubikaza']>=volume_low) & (cars['Kubikaza']<=volume_high) 
                   & (cars['Snaga motora']>=power_low) & (cars['Snaga motora']<=power_high)
-                  & (cars['Cena']>=price_low) & (cars['Cena']<=price_high)]
-        #(cars['Cena']>=price_low) & (cars['Cena']<=price_high)
-        
-        random_similar = df.sample(n=5, random_state=1)#.values.tolist()
+                  & (cars['Cena']>=price_low) & (cars['Cena']<=price_high)
+                  & (~cars['Model'].isin([model]))]
+
+        random_similar = df.sample(frac=0.4, random_state=1).drop_duplicates(['Model'])
+
         random_similar = random_similar[['Marka', 'Model', 'Godiste', 'Kilometraza', 'Gorivo', 'Kubikaza', 'Snaga motora', 'Cena']]
-        random_similar['Kubikaza'] = random_similar['Kubikaza'] .round(decimals=1)
+        random_similar['Kubikaza'] = random_similar['Kubikaza'].round(decimals=1)
 
         if random_similar is not None:
-            return random_similar
+            if not random_similar.empty:
+                return random_similar
 
     except Exception as e:
         print(e)
         
-def plot_avg(car):
+def plot_avg(car, other=None):
     price = int(car['Cena'])
     model_name = car['Model']
     year = int(car['Godiste'])
-    mean_price = cars[(cars['Model']==model_name)]
-    fig = px.line(data_frame=mean_price.groupby(['Godiste'])['Cena'].mean().reset_index(), x="Godiste", y="Cena", title='Prosečna cena po godištu')
+    if other==None:
+        mean_price = cars[(cars['Model']==model_name)]
+    else:
+        other.append(model_name)
+        mean_price = cars[(cars['Model'].isin(other)) & (cars['Godiste']<(cars[(cars['Model']==model_name)]['Godiste'].max()))]
+    #mean_price.groupby(['Model', 'Godiste'])['Cena'].mean().reset_index()
+    fig = px.line(data_frame=mean_price.groupby(['Model', 'Godiste'])['Cena'].mean().reset_index(), x="Godiste", y="Cena", title='Prosečna cena po godištu', color='Model')
     fig.add_scatter(x = [year], y = [price], name='Predviđena cena')
+
     fig.update_layout(
     xaxis_title="Godiste",
     yaxis_title="Cena",
     font=dict(
-        #family="Courier New",
+
         size=15
     ),
     xaxis = dict(
         tickmode = 'linear'
     )
     )
-    fig.update_traces(marker=dict(size=15))
+
+    fig.update_traces(marker=dict(size=15), line=dict(width=2.5))
     return fig
 
 def plot_predictd_years(previous, current, next_y, year):
     prices = [previous, current, next_y]
     years = [year-1, year, year+1]
-    #years = [int(k) for k in years]
-    fig = px.bar(x=years, y=prices, title='Predviđena cena za ±1 godinu sa istim parametrima')
-    fig.update_layout(
+    colors = ['royalblue',] * 3
+    colors[1] = 'crimson'
+    fig = go.Figure()
+    #fig = px.bar(x=years, y=prices, title='Predviđena cena za ±1 godinu sa istim parametrima', width=500, height=500)
+    fig.add_trace(go.Bar(x=years, y=prices,
+    marker_color=colors))
+    fig.update_layout(title = 'Predviđena cena za ±1 godinu sa istim parametrima',
     xaxis_title="Godiste",
     yaxis_title="Cena",
     font=dict(
@@ -160,6 +179,18 @@ def plot_predictd_years(previous, current, next_y, year):
         tickmode = 'linear',
         tick0 = 1,
     )
+    
     )
 
     return fig
+def plot_pie():
+    fig = px.bar(data_frame = results, y ='Features', x = 'Importances', orientation='h', title="Uticaj parametara na cenu automobila u %",text="Importances")
+    fig.update_layout(yaxis={'categoryorder':'total ascending'}, font=dict(
+        size=15
+    ),
+    xaxis_title="Značaj u procentima",
+    yaxis_title="Parametar"
+    )
+    
+    return fig
+    

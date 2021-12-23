@@ -12,14 +12,22 @@ import streamlit as st
 import carClass
 import predict_recommend as predict
 import pandas as pd
+import matplotlib.pyplot as plt
 
 ### Info
+st.set_page_config(layout="wide")
 
-st.title("Predviđanje cene polovnih automobila")
+
+container = st.container()
+columns = st.columns((1,1))
 
 
-st.write(""" Predikcija cene polovnog automobila se izračunava na osnovu unetih parametrata u opcijama sa leve strane. """)
-         
+with container:
+    st.title("Predviđanje cene polovnih automobila")
+    
+    
+    st.subheader(""" Predikcija cene polovnog automobila se izračunava na osnovu unetih parametrata u opcijama sa leve strane. """)
+    
 st.sidebar.write(""" # Specifikacije automobila """)
 
 
@@ -40,8 +48,8 @@ volume = st.sidebar.selectbox("Izaberi kubikažu", carClass.get_car_volume(model
 fuel = st.sidebar.selectbox("Izaberi tip goriva", carClass.get_fuel_type(model, car_type))
 
 mileage_min, mileage_max = carClass.get_car_mileage(model)
-mileage_min = mileage_min-10000
-mileage_max = mileage_max+10000
+mileage_min = mileage_min
+mileage_max = mileage_max
 mileage = st.sidebar.slider('Izaberi kilometražu',mileage_min,mileage_max)
 
 power_ = carClass.get_engine_power(model, volume)
@@ -54,13 +62,8 @@ drive = st.sidebar.selectbox('Izaberi pogon',carClass.get_drive(model, car_type)
 
 shift = st.sidebar.selectbox('Izaberi menjac',carClass.get_shift(model, car_type))
 
-#doors = st.sidebar.selectbox('Izaberi broj vrata',carClass.get_no_doors(model, car_type))
 
 color = st.sidebar.selectbox('Izaberi boju auta',carClass.get_colors())
-
-#color_ent = st.sidebar.selectbox('Izaberi boju enterijera',carClass.get_enterior_color())
-
-#ent_material = st.sidebar.selectbox('Izaberi materijal enterijera',carClass.get_material())
 
 
 
@@ -70,10 +73,15 @@ color = st.sidebar.selectbox('Izaberi boju auta',carClass.get_colors())
 predicted_price, predicted_price_p, predicted_price_m = predict.predict_price([brand, model, year, mileage, car_type, fuel, volume, power, drive,
                                          shift, color])
 
-
-st.header("Predviđena cena: {}€ ±5%".format(int(predicted_price[0])))
-fig_year = predict.plot_predictd_years(predicted_price_m[0], predicted_price[0], predicted_price_p[0], year)
-st.plotly_chart(fig_year, use_container_width=True)
+with container:
+    st.header("Predviđena cena: {}€ ±5%".format(int(predicted_price[0])))
+with columns[0]:
+    fig_year = predict.plot_predictd_years(predicted_price_m[0], predicted_price[0], predicted_price_p[0], year)
+    st.plotly_chart(fig_year)
+with columns[1]:
+    figure = predict.plot_pie()
+    st.plotly_chart(figure)
+    st.markdown("__Napomena__: _Ostali parametri imaju značaj > 2% na predikciju cene_")
 
 
 ## Show similar cars 
@@ -91,15 +99,16 @@ car = {'Marka' : brand,
        'Boja': color,
        'Cena': int(predicted_price[0])}
 
-show_plot = st.sidebar.checkbox('Analiziraj cenu po godištu')
+#show_plot = st.sidebar.checkbox('Analiziraj cenu po godištu')
 
-submit = st.sidebar.checkbox('Uporedi automobile')
+submit = st.sidebar.checkbox('Pronađi slične automobile automobile/analiziraj cenu po godištu')
+
     
-if show_plot:
+#if show_plot:
         
-    fig = predict.plot_avg(car)
+#    fig = predict.plot_avg(car)
 
-    st.plotly_chart(fig, use_container_width=True)
+#    st.plotly_chart(fig, use_container_width=True)
 
 
 if submit:
@@ -119,6 +128,24 @@ if submit:
         
         st.write("Pronašli smo sledeće automobile koji su slični izabranom:")
         st.table(similar_cars)
+        #if show_plot:
+        similar_list = similar_cars.values.tolist()
+        lista_slicnih = []
+        for s in similar_list:
+            lista_slicnih.append(" | ".join([str(elem) for elem in s]))
+        options = st.multiselect(
+            'Uporedi slične automobile različitih modela',
+            lista_slicnih
+            )
+
+        options = [k.replace(" | ",",").split(",")[1] for k in options]
+        #(options)
+        fig = predict.plot_avg(car, other=options)
+
+        st.plotly_chart(fig, use_container_width=True)
+        
     else:
         st.write("Nismo pronašli slične automobile, pokušajte da promenite neke od parametara")
+        fig = predict.plot_avg(car, other=None)
+        st.plotly_chart(fig, use_container_width=True)
 
