@@ -21,20 +21,29 @@ import plotly.graph_objs as go
 import plotly.tools as tls
 import plotly.express as px
 import pickle
+from scipy.special import inv_boxcox
+import math
 
-cars = pd.read_csv("./Data/usedCleaned21.csv")
+lam_price = -0.20206420217754742
+
+cars = pd.read_csv("./Data/usedCleaned2021.csv")
+cars['Cena'] = cars['Cena'].apply(lambda x: inv_boxcox(x, lam_price))
 df_enc = cars.drop(columns='Cena')
 df_enc = pd.get_dummies(df_enc)
 
 
-model = pickle.load(open('model_lgb21.pkl', 'rb'))
+
+model = pickle.load(open('./models/cb_model.pkl', 'rb'))
 feature_importances = np.around((model.feature_importances_ / sum(model.feature_importances_)) * 100, 0)[:4]
 results = pd.DataFrame({'Features': list(df_enc.columns[:4]),
                         'Importances': feature_importances})
 
 
-columns = ['Marka', 'Model','Godiste','Kilometraza', 'Karoserija', 'Gorivo', 'Kubikaza','Snaga motora',  'Pogon',
-           'Menjac', 'Boja']
+columns = ['Marka', 'Model','Godiste','Kilometraza', 'Karoserija', 'Gorivo', 'Kubikaza','Snaga motora', 'EKM' ,'Pogon',
+           'Menjac', 'Klima','Boja', 'Materijal enterijera']
+
+def roundup(x):
+    return int(math.ceil(int(x) / 10)) * 10
 
 def predict_price(*params):
     parameters = params[0]
@@ -69,10 +78,11 @@ def predict_price(*params):
     value_p = np.array(value_p).reshape((1,-1))
     value_m = np.array(value_m).reshape((1,-1))
     
-    prediction = model.predict(value).astype(int)
-    prediction_p = model.predict(value_p).astype(int)
-    prediction_m = model.predict(value_m).astype(int)
-    
+    prediction = roundup(inv_boxcox(model.predict(value).astype(float),lam_price))
+    prediction_p = roundup(inv_boxcox(model.predict(value_p).astype(float),lam_price))
+    prediction_m = roundup(inv_boxcox(model.predict(value_m).astype(float),lam_price))
+    print(prediction)
+
     return prediction, prediction_p, prediction_m
     
 def recommend_car(car):
@@ -119,7 +129,11 @@ def recommend_car(car):
                   & (cars['Cena']>=price_low) & (cars['Cena']<=price_high)
                   & (~cars['Model'].isin([model]))]
 
-        random_similar = df.sample(frac=0.4, random_state=1).drop_duplicates(['Model'])
+        if df.count()[0]>=5:
+            n = 5
+        else:
+            n = df.count()[0]
+        random_similar = df.sample(n=n, random_state=1).drop_duplicates(['Model'])
 
         random_similar = random_similar[['Marka', 'Model', 'Godiste', 'Kilometraza', 'Gorivo', 'Kubikaza', 'Snaga motora', 'Cena']]
         random_similar['Kubikaza'] = random_similar['Kubikaza'].round(decimals=1)

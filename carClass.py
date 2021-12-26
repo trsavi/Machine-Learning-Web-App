@@ -9,7 +9,7 @@ Created on Wed Nov 17 19:42:00 2021
 
 import pandas as pd
 
-data = pd.read_csv('./Data/usedCleaned21.csv')
+data = pd.read_csv('./Data/usedCleaned2021.csv')
 
 print(data.columns)
 
@@ -29,8 +29,8 @@ def get_car_types(brend, model):
 def get_car_year(model):
     return int(data[data['Model']==model]['Godiste'].min()), int(data[data['Model']==model]['Godiste'].max())
 
-def get_car_mileage(model):
-    return int(data[data['Model']==model]['Kilometraza'].min()), int(data[data['Model']==model]['Kilometraza'].max())
+def get_car_mileage(model, year):
+    return int(data[(data['Model']==model) & (data['Godiste']==year)]['Kilometraza'].min()), int(data[(data['Model']==model) &  (data['Godiste']==year)]['Kilometraza'].max())
 
 # Get car volume
 def get_car_volume(model, karoserija):
@@ -53,9 +53,19 @@ def get_drive(model, car_type):
 def get_shift(model, car_type):
     return sorted(list(data[(data['Model']==model) & (data['Karoserija']==car_type)]['Menjac'].unique()))
 
+def get_emmision_class(model, year):
+    return sorted(list(data[(data['Model']==model) & (data['Godiste']==year)]['EKM'].unique()))
+
+# Get car colors
+def get_material():
+    return sorted(list(data['Materijal enterijera'].unique()))
 
 # Get car colors
 def get_colors():
     return sorted(list(data['Boja'].unique()))
+
+# Get car ac
+def get_ac(model):
+    return sorted(list(data[(data['Model']==model)]['Klima'].unique()))
 
 
