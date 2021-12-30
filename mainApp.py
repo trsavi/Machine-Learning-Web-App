@@ -50,7 +50,7 @@ fuel = st.sidebar.selectbox("Izaberi tip goriva", carClass.get_fuel_type(model, 
 mileage_min, mileage_max = carClass.get_car_mileage(model, year)
 mileage_min = mileage_min+10000
 mileage_max = mileage_max-10000
-mileage = st.sidebar.slider('Izaberi kilometražu',mileage_min,mileage_max)
+mileage = st.sidebar.slider('Izaberi kilometražu',mileage_min,mileage_max, step=5000)
 
 power_ = carClass.get_engine_power(model, volume)
 
@@ -68,17 +68,22 @@ color = st.sidebar.selectbox('Izaberi boju auta',carClass.get_colors())
 
 material = st.sidebar.selectbox('Izaberi materijal enterijera',carClass.get_material())
 
-avg_odo = mileage/2021-year
+
+age = 2021-year
+avg_odo = mileage/age
+
+km_cat = predict.convert_mileage(mileage)
+
 
 ## Import dataframe and encode it
 
-predicted_price, predicted_price_p, predicted_price_m = predict.predict_price([brand, model, year, mileage, car_type, fuel, volume, power,emission, drive,
-                                         shift, ac, color, material, avg_odo])
+predicted_price, predicted_price_p, predicted_price_m = predict.predict_price([brand, model, car_type, fuel, volume, power,emission, drive,
+                                         shift, ac, color, material, avg_odo, age, km_cat])
 
 with container:
     st.header("Predviđena cena: {}€ ±5%".format(predicted_price))
 with columns[0]:
-    fig_year = predict.plot_predictd_years(predicted_price_m, predicted_price, predicted_price_p, year)
+    fig_year = predict.plot_predictd_years(predicted_price_p, predicted_price, predicted_price_m, year)
     st.plotly_chart(fig_year)
 with columns[1]:
     figure = predict.plot_pie()
@@ -102,7 +107,9 @@ car = {'Marka' : brand,
        'Klima': ac,
        'Boja': color,
        'Materijal enterijera': material,
-       'Cena': int(predicted_price)}
+       'prosek_god_km': avg_odo,
+       'Starost': age,
+       'Cena': predicted_price}
 
 #show_plot = st.sidebar.checkbox('Analiziraj cenu po godištu')
 

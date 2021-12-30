@@ -9,9 +9,8 @@ Created on Wed Nov 17 19:42:00 2021
 
 import pandas as pd
 
-data = pd.read_csv('./Data/usedCleaned2021.csv')
+data = pd.read_csv('./Data/usedCleanedPre.csv')
 
-print(data.columns)
 
 # Get bradns
 def get_brands():

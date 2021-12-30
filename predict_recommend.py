@@ -21,29 +21,37 @@ import plotly.graph_objs as go
 import plotly.tools as tls
 import plotly.express as px
 import pickle
-from scipy.special import inv_boxcox
+from scipy.special import inv_boxcox, boxcox
 import math
 
-lam_price = -0.20206420217754742
+#lam_price = -0.18829260545282225
+#lam_km = -0.38020162182547906
 
-cars = pd.read_csv("./Data/usedCleaned2021.csv")
-cars['Cena'] = cars['Cena'].apply(lambda x: inv_boxcox(x, lam_price))
-df_enc = cars.drop(columns='Cena')
+
+cars = pd.read_csv("./Data/usedCleanedPre.csv")
+#cars['Cena'] = cars['Cena'].apply(lambda x: boxcox(x, lam_price))
+#cars['prosek_god_km'] = cars['prosek_god_km'].apply(lambda x: boxcox(x, lam_km))
+df_enc = cars.drop(columns=['Cena', 'Godiste','Kilometraza'])
 df_enc = pd.get_dummies(df_enc)
 
 
 
-model = pickle.load(open('./models/cb_model.pkl', 'rb'))
+model = pickle.load(open('./models/xg_model.pkl', 'rb'))
 feature_importances = np.around((model.feature_importances_ / sum(model.feature_importances_)) * 100, 0)[:4]
 results = pd.DataFrame({'Features': list(df_enc.columns[:4]),
                         'Importances': feature_importances})
 
 
-columns = ['Marka', 'Model','Godiste','Kilometraza', 'Karoserija', 'Gorivo', 'Kubikaza','Snaga motora', 'EKM' ,'Pogon',
-           'Menjac', 'Klima','Boja', 'Materijal enterijera']
+columns = ['Marka', 'Model','Karoserija', 'Gorivo', 'Kubikaza','Snaga motora', 'EKM' ,'Pogon',
+           'Menjac', 'Klima','Boja', 'Materijal enterijera', 'prosek_god_km','Starost', 'Km_cat']
 
 def roundup(x):
     return int(math.ceil(int(x) / 10)) * 10
+
+def convert_mileage(row):
+    for i in range(80000, 320000, 10000):
+        if row>=i and row<i+10000:
+            return str(i)+"-"+str(i+10000)
 
 def predict_price(*params):
     parameters = params[0]
@@ -51,9 +59,9 @@ def predict_price(*params):
     params_plus = [[k] for k in parameters]
     params_minus = [[k] for k in parameters]
     
-    #(params_plus)
-    params_plus[2][0] = int(params_plus[2][0]+1)
-    params_minus[2][0] = int(params_minus[2][0]-1)
+
+    params_plus[-2][0] = int(params_plus[-2][0]+1)
+    params_minus[-2][0] = int(params_minus[-2][0]-1)
     #print(params_plus[2][0])
     
     
@@ -77,11 +85,10 @@ def predict_price(*params):
     value = np.array(value).reshape((1,-1))
     value_p = np.array(value_p).reshape((1,-1))
     value_m = np.array(value_m).reshape((1,-1))
-    
-    prediction = roundup(inv_boxcox(model.predict(value).astype(float),lam_price))
-    prediction_p = roundup(inv_boxcox(model.predict(value_p).astype(float),lam_price))
-    prediction_m = roundup(inv_boxcox(model.predict(value_m).astype(float),lam_price))
-    print(prediction)
+
+    prediction = roundup(model.predict(value).astype(float))
+    prediction_p = roundup(model.predict(value_p).astype(float))
+    prediction_m =roundup(model.predict(value_m).astype(float))
 
     return prediction, prediction_p, prediction_m
     
@@ -104,20 +111,20 @@ def recommend_car(car):
     else:
         car_type = ['Hecbek']
     
-    mileage_high = mileage + 30000
-    mileage_low = mileage - 30000
+    mileage_high = mileage + 20000
+    mileage_low = mileage - 20000
     
-    year_high = year + 2
-    year_low = year - 2
+    year_high = year + 1
+    year_low = year - 1
     
-    volume_high = volume + volume*0.20
-    volume_low = volume -  volume*0.20
+    volume_high = volume + volume*0.15
+    volume_low = volume -  volume*0.15
     
-    power_high = power + power*0.25
-    power_low =  power - power*0.25
+    power_high = power + power*0.20
+    power_low =  power - power*0.20
     
-    price_high = price + price*0.15
-    price_low = price - price*0.15
+    price_high = price + price*0.2
+    price_low = price - price*0.2
     
     try:
         df = cars[
@@ -128,16 +135,17 @@ def recommend_car(car):
                   & (cars['Snaga motora']>=power_low) & (cars['Snaga motora']<=power_high)
                   & (cars['Cena']>=price_low) & (cars['Cena']<=price_high)
                   & (~cars['Model'].isin([model]))]
-
+        
+        #print(df.count()[0])
         if df.count()[0]>=5:
             n = 5
         else:
             n = df.count()[0]
         random_similar = df.sample(n=n, random_state=1).drop_duplicates(['Model'])
-
+        
         random_similar = random_similar[['Marka', 'Model', 'Godiste', 'Kilometraza', 'Gorivo', 'Kubikaza', 'Snaga motora', 'Cena']]
-        random_similar['Kubikaza'] = random_similar['Kubikaza'].round(decimals=1)
-
+        #random_similar['Kubikaza'] = random_similar['Kubikaza'].round(decimals=1)
+        #print(random_similar)
         if random_similar is not None:
             if not random_similar.empty:
                 return random_similar
