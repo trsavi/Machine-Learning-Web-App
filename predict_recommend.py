@@ -37,9 +37,11 @@ df_enc = pd.get_dummies(df_enc)
 
 
 model = pickle.load(open('./models/xg_model.pkl', 'rb'))
+
+#print(model.feature_importances_)
 feature_importances = np.around((model.feature_importances_ / sum(model.feature_importances_)) * 100, 0)[:4]
 results = pd.DataFrame({'Features': list(df_enc.columns[:4]),
-                        'Importances': feature_importances})
+                        'Importances': model.feature_importances_.argsort()[:4]})
 
 
 columns = ['Marka', 'Model','Karoserija', 'Gorivo', 'Kubikaza','Snaga motora', 'EKM' ,'Pogon',
@@ -54,6 +56,7 @@ def convert_mileage(row):
             return str(i)+"-"+str(i+10000)
 
 def predict_price(*params):
+    print(params[0])
     parameters = params[0]
     params = [[k] for k in parameters]
     params_plus = [[k] for k in parameters]
@@ -62,7 +65,7 @@ def predict_price(*params):
 
     params_plus[-2][0] = int(params_plus[-2][0]+1)
     params_minus[-2][0] = int(params_minus[-2][0]-1)
-    #print(params_plus[2][0])
+    
     
     
     params = dict(zip(columns, params))
