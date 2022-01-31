@@ -227,11 +227,11 @@ def plot_predictd_years(previous, current, next_y, year):
 
     return fig
 def plot_pie():
-    fig = px.bar(data_frame = results, y ='Features', x = 'Importances', orientation='h', title="Uticaj parametara na cenu automobila u %")
+    fig = px.bar(data_frame = results, y ='Features', x = 'Importances', orientation='h', title="Korelacija između cene automobila i parametra u %")
     fig.update_layout(yaxis={'categoryorder':'total ascending'}, font=dict(
         size=15
     ),
-    xaxis_title="Značaj u procentima",
+    xaxis_title="Koeficijent korelacije",
     yaxis_title="Parametar"
     )
     
