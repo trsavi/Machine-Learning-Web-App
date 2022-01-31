@@ -1,4 +1,4 @@
-# Predicting used car price and recommending similar cars to user
+# Predicting the price of used car and recommending similar cars to the user
 
 Machine learning web application that predicts used car price based on car parameters. Furthermore, it incorporates recommendation model for similar cars and it uses graphs to visualize price comparison between similar cars. 
 
@@ -6,7 +6,7 @@ Machine learning web application that predicts used car price based on car param
 Data source: https://www.polovniautomobili.com/ (Web scraped car ads)
 
 
-This project represents full-stack Data Science project, from collecting raw data from website to deploying actual application to streamlit framework. It incorporates ETL, EDA, ML and model deployment as key features of this project. Also, all of this could be orchestrated through machine learning pipeline into one single project file. 
+This project represents a full-stack Data Science project, from collecting raw data from a website to deploying the actual application to the streamlit framework. It incorporates ETL, EDA, ML, and model deployment as key features of this project. In addition, all of this could be orchestrated through the machine learning pipeline into a one single file. 
 
 ## ETL - Extract Transform Load
 
@@ -14,15 +14,16 @@ This project represents full-stack Data Science project, from collecting raw dat
 
 *Transform* - Most of the work was around cleaning and transforming data into something more meaningful and easier for the model to consume and gain more insight in the end. 
 
-*Load* - After successfully cleaning and transforming, data needs to be stored in some form of a database - in this case a csv file because the file contains <30k rows and it's the easiest way to work with data, for me (for now).
+*Load* - After successfully cleaning and transforming, data needs to be stored in some form of a database - in this case, a csv file, because the file contains <30k rows and it's the easiest way to work with data, for me (for now).
 
 ## EDA  - Explanatory Data Analysis
 
-Data analysis was part of cleaning and trasforming data and you can gain more insight into what I did when it comes to ETL and EDA on this link -> [EDA, ETL](/Analysis2.0.ipynb) (*Note that the notebook has a formatting problem but if you download it you can run it and check it on the local machine*)
+Data analysis was part of cleaning and trasforming data and you can gain more insight into what I did when it comes to ETL and EDA on this link -> [EDA, ETL](/Analysis2.0.ipynb) (*Note that the notebook has a formatting problem but if you download it you can run and check it out on the local machine*)
 
 ## ML - Machine Learning
 
-Machine learning part was straightforward, try bunch of [ml algorithms](/ML_Pipe.ipynb)  and [neural network](/Neural Network.ipynb) and save the best model. 
+Machine learning part was straightforward, try bunch of [ml algorithms](/ML_Pipe.ipynb)  and [neural network](/Neural Network.ipynb) and save the best model.
+Another thing in addition to machine learning model is recommender system, rule-based recommender system, to be precise. It is not perfect and it's based on intuition and domain knowledge to find similar cars.
 
 ## Model deployment 
 
