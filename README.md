@@ -1,4 +1,4 @@
-# Predicting the price of used car and recommending similar cars to the user
+# Predicting the price of used cars and recommending similar cars to the user
 
 Machine learning web application that predicts used car price based on car parameters. Furthermore, it incorporates recommendation model for similar cars and it uses graphs to visualize price comparison between similar cars. 
 
