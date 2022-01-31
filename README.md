@@ -10,5 +10,24 @@ This project represents full-stack Data Science project, from collecting raw dat
 
 ## ETL - Extract Transform Load
 
-One of the first things that we need to accomplish is to extract raw data from a data source, in this case I [webscraped] (https://github.com/trsavi/Machine-Learning-Web-App/blob/main/PolovniAutomobili%20WebScraper.ipynb) a website.
+*Extract* - One of the first things that we need to accomplish is to extract raw data from a data source, in this case I [webscraped](/PolovniAutomobili WebScraper.ipynb) a website.
+
+*Transform* - Most of the work was around cleaning and transforming data into something more meaningful and easier for the model to consume and gain more insight in the end. 
+
+*Load* - After successfully cleaning and transforming, data needs to be stored in some form of a database - in this case a csv file because the file contains <30k rows and it's the easiest way to work with data, for me (for now).
+
+## EDA  - Explanatory Data Analysis
+
+Data analysis was part of cleaning and trasforming data and you can gain more insight into what I did when it comes to ETL and EDA on this link -> [EDA, ETL](/Analysis2.0.ipynb) (*Note that the notebook has a formatting problem but if you download it you can run it and check it on the local machine*)
+
+## ML - Machine Learning
+
+Machine learning part was straightforward, try bunch of [ml algorithms](/ML_Pipe.ipynb)  and [neural network](/Neural Network.ipynb) and save the best model. 
+
+## Model deployment 
+
+I used [streamlit](https://streamlit.io/) framework to deploy and share application. Another alternative is to Dockerize whole application and post it to DockerHub.
+
+You can check out application here: https://share.streamlit.io/trsavi/machine-learning-web-app/main/mainApp.py
+
 
