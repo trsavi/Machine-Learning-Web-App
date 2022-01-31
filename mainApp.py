@@ -27,6 +27,7 @@ with container:
     
     
     st.subheader(""" Predikcija cene polovnog automobila se izračunava na osnovu unetih parametrata u opcijama sa leve strane. """)
+    st.write(""" #### _Datum uzimanja podataka: Novembar 2021. godine_ """)
     
 st.sidebar.write(""" # Specifikacije automobila """)
 
@@ -77,18 +78,18 @@ km_cat = predict.convert_mileage(mileage)
 
 ## Import dataframe and encode it
 
-predicted_price, predicted_price_p, predicted_price_m = predict.predict_price([brand, model, car_type, fuel, volume, power,emission, drive,
-                                         shift, ac, color, material, avg_odo, age, km_cat])
+predicted_price, predicted_price_p, predicted_price_m = predict.predict_price([brand, model, car_type, fuel, volume, power,emission, drive, shift, ac, color, material, avg_odo, age, km_cat])
 
 with container:
-    st.header("Predviđena cena: {}€ ±5%".format(predicted_price))
+    st.header("Predviđena cena: {}€  _±{}€*_".format(predicted_price, predict.mae_calculator(predicted_price)))
+    st.write("_* Odnosi se na prosečnu grešku predikcije za dobijenu cenu_")
 with columns[0]:
     fig_year = predict.plot_predictd_years(predicted_price_p, predicted_price, predicted_price_m, year)
     st.plotly_chart(fig_year)
 with columns[1]:
     figure = predict.plot_pie()
     st.plotly_chart(figure)
-    st.markdown("__Napomena__: _Ostali parametri imaju značaj > 2% na predikciju cene_")
+    st.markdown("__Napomena__: _PKPG - prosečna kilometraža po godini (Kilometraza/Starost automobila)_")
 
 
 ## Show similar cars 

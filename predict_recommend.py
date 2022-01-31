@@ -23,10 +23,7 @@ import plotly.express as px
 import pickle
 from scipy.special import inv_boxcox, boxcox
 import math
-
-#lam_price = -0.18829260545282225
-#lam_km = -0.38020162182547906
-
+import xgboost as xgb
 
 cars = pd.read_csv("./Data/usedCleanedPre.csv")
 #cars['Cena'] = cars['Cena'].apply(lambda x: boxcox(x, lam_price))
@@ -38,14 +35,29 @@ df_enc = pd.get_dummies(df_enc)
 
 model = pickle.load(open('./models/xg_model.pkl', 'rb'))
 
-#print(model.feature_importances_)
-feature_importances = np.around((model.feature_importances_ / sum(model.feature_importances_)) * 100, 0)[:4]
-results = pd.DataFrame({'Features': list(df_enc.columns[:4]),
-                        'Importances': model.feature_importances_.argsort()[:4]})
-
-
 columns = ['Marka', 'Model','Karoserija', 'Gorivo', 'Kubikaza','Snaga motora', 'EKM' ,'Pogon',
            'Menjac', 'Klima','Boja', 'Materijal enterijera', 'prosek_god_km','Starost', 'Km_cat']
+
+
+
+#feature_importances = np.around((model.feature_importances_ / sum(model.feature_importances_)) * 100, 0)[:4]
+results = pd.DataFrame({'Features': ['PKPG','Starost','EKM','Model','Menjac', 'Snaga motora', 'Karoserija'],
+                       'Importances': [78, 78, 74,67, 48, 41, 37]})
+
+mae_dict = {'1000-2000': 110,
+ '2000-3000': 140,
+ '3000-4000': 180,
+ '4000-5000': 210,
+ '5000-6000': 240,
+ '6000-7000': 310,
+ '7000-8000': 320,
+ '8000-9000': 370,
+ '9000-10000': 350,
+ '10000-11000': 360,
+ '11000-12000': 370,
+ '12000-13000': 330,
+ '13000-14000': 420,
+ '14000-15000': 570}
 
 def roundup(x):
     return int(math.ceil(int(x) / 10)) * 10
@@ -54,9 +66,15 @@ def convert_mileage(row):
     for i in range(80000, 320000, 10000):
         if row>=i and row<i+10000:
             return str(i)+"-"+str(i+10000)
+        
+def mae_calculator(price):
+    
+    min_max = str((round((price // 1000))*1000)) + '-' + str((round((price // 1000))*1000)+1000)
+    return mae_dict[min_max]
+
 
 def predict_price(*params):
-    print(params[0])
+    
     parameters = params[0]
     params = [[k] for k in parameters]
     params_plus = [[k] for k in parameters]
@@ -209,7 +227,7 @@ def plot_predictd_years(previous, current, next_y, year):
 
     return fig
 def plot_pie():
-    fig = px.bar(data_frame = results, y ='Features', x = 'Importances', orientation='h', title="Uticaj parametara na cenu automobila u %",text="Importances")
+    fig = px.bar(data_frame = results, y ='Features', x = 'Importances', orientation='h', title="Uticaj parametara na cenu automobila u %")
     fig.update_layout(yaxis={'categoryorder':'total ascending'}, font=dict(
         size=15
     ),
