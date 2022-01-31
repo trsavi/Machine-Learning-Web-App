@@ -24,7 +24,7 @@ Data analysis was a part of cleaning and trasforming the data and you can gain m
 ## ML - Machine Learning
 
 The machine learning part was straightforward, I tried bunch of [ml algorithms](/ML_Pipe.ipynb)  and [neural network](/Neural Network.ipynb) and saved the best model.
-Another thing, in addition to machine learning model, is recommender system, rule-based recommender system, to be precise. It is not perfect and it's based on intuition and domain knowledge to find similar cars.
+Another thing, in addition to the machine learning model is a recommender system, the rule-based recommender system, to be precise. It is not perfect and it's based on intuition and domain knowledge to find similar cars.
 
 ## Model deployment 
 
