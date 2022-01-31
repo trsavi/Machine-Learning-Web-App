@@ -30,9 +30,9 @@ I used [streamlit](https://streamlit.io/) framework to deploy and share applicat
 
 You can check out application here: https://share.streamlit.io/trsavi/machine-learning-web-app/main/mainApp.py
 
-### How to use application (since it's in Serbian) 
+### How to use application (since it's in Serbian)? 
 
-  On the left sidebar there are parameters of the chosen vehicle which can be modified and the main screen will change it's prediction price and graphs accordingly.
-  At the bottom of the sidebar there is a checkbox if you want to analyze and compare similar cars. When you click on it there should be shown list of similar cars (if there are   any) and you can choose any of them to be plotted on graph with the chosen vehicle on the left sidebar.
+  * On the left sidebar there are parameters of the chosen vehicle which can be modified and the main screen will change it's prediction price and graphs accordingly.
+    At the bottom of the sidebar there is a checkbox if you want to analyze and compare similar cars. When you click on it there should be shown list of similar cars (if there       are   any) and you can choose any of them to be plotted on graph with the chosen vehicle on the left sidebar.
   
 
