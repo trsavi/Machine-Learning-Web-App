@@ -28,13 +28,13 @@ Another thing, in addition to machine learning model, is recommender system, rul
 
 ## Model deployment 
 
-I used [streamlit](https://streamlit.io/) framework to deploy and share application. Another alternative is to Dockerize whole application and post it to DockerHub.
+I used the [streamlit](https://streamlit.io/) framework to deploy and share application. Another alternative is to Dockerize whole application and post it to DockerHub.
 
 You can check out application here: https://share.streamlit.io/trsavi/machine-learning-web-app/main/mainApp.py
 
 ### How to use application (since it's in Serbian)? 
 
-  * On the left sidebar there are parameters of the chosen vehicle which can be modified and the main screen will change it's prediction price and graphs accordingly.
-    At the bottom of the sidebar there is a checkbox if you want to analyze and compare similar cars. When you click on it there should be shown list of similar cars (if there       are   any) and you can choose any of them to be plotted on graph with the chosen vehicle on the left sidebar.
+  * On the left sidebar, there are parameters of the chosen vehicle which can be modified, and the main screen will change it's prediction price and graphs accordingly. At the bottom of the sidebar, there is a checkbox if you want to analyze and compare similar cars. When you click on it, there should be a list showing similar cars (if there are any) and you can choose any of them to be plotted on the graph with the chosen vehicle on the left sidebar.
+   
   
 
