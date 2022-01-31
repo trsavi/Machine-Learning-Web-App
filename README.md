@@ -18,7 +18,8 @@ This project represents a full-stack Data Science project, from collecting raw d
 
 ## EDA  - Explanatory Data Analysis
 
-Data analysis was part of cleaning and trasforming data and you can gain more insight into what I did when it comes to ETL and EDA on this link -> [EDA, ETL](/Analysis2.0.ipynb) (*Note that the notebook has a formatting problem but if you download it you can run and check it out on the local machine*)
+Data analysis was a part of cleaning and trasforming the data and you can gain more insight into what I did when it comes to ETL and EDA on this link -> [EDA, ETL](/Analysis2.0.ipynb) (*Note that the notebook has a formatting problem but if you download it you can run and check it out on the local machine*)
+
 
 ## ML - Machine Learning
 
