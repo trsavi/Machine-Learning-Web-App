@@ -28,7 +28,7 @@ Another thing, in addition to the machine learning model is a recommender system
 
 ## Model deployment 
 
-I used the [streamlit](https://streamlit.io/) framework to deploy and share application. Another alternative is to Dockerize whole application and post it to DockerHub.
+I used the [streamlit](https://streamlit.io/) framework to deploy and share the application. Another alternative is to Dockerize the whole application and post it to DockerHub.
 
 You can check out application here: https://share.streamlit.io/trsavi/machine-learning-web-app/main/mainApp.py
 
