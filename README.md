@@ -3,14 +3,14 @@
 Machine learning web application that predicts the price of used cars based on car parameters. Furthermore, it incorporates a recommendation model for similar cars and it uses graphs to visualize price comparison between similar cars.
 
 
-Data source: https://www.polovniautomobili.com/ (Web scraped car ads)
+Data source -> Multiple online used cars markets
 
 
 This project represents a full-stack Data Science project, from collecting raw data from a website to deploying the actual application to the streamlit framework. It incorporates ETL, EDA, ML, and model deployment as key features of this project. In addition, all of this could be orchestrated through the machine learning pipeline into a one single file. 
 
 ## ETL - Extract Transform Load
 
-*Extract* - One of the first things that we need to accomplish is to extract raw data from a data source, in this case I [webscraped](/PolovniAutomobili WebScraper.ipynb) a website.
+*Extract* - One of the first things that we need to accomplish is to extract raw data from a data source, in this case I webscraped a website.
 
 *Transform* - Most of the work was around cleaning and transforming data into something more meaningful and easier for the model to consume and gain more insight in the end. 
 
