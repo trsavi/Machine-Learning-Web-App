@@ -32,7 +32,7 @@ with container:
     
     
     st.subheader(""" Predikcija cene polovnog automobila se izračunava na osnovu unetih parametrata u opcijama sa leve strane. """)
-    st.write(""" #### _Datum uzimanja podataka: Novembar 2021. godine_ """)
+    st.write(""" #### _Datum preuzimanja podataka: Novembar 2021. godine_ """)
     #st.markdown(f'Page viewed = {s.counter}')
     
 st.sidebar.write(""" # Specifikacije automobila """)
