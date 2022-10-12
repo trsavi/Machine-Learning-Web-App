@@ -3,3 +3,4 @@ scikit-learn
 xgboost==1.5.2
 seaborn
 plotly
+ipython
