@@ -10,4 +10,6 @@ setuptools==68.2.2
 wheel==0.41.3
 
 # use a newer xgboost that plays nicer with modern envs
-xgboost==1.7.6
+xgboost==1.5.2
+
+
