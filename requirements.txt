@@ -4,3 +4,5 @@ xgboost==1.5.2
 seaborn
 plotly
 ipython
+setuptools>=65
+wheel
