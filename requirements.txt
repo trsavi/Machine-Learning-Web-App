@@ -1,8 +1,13 @@
+streamlit
 matplotlib
 scikit-learn
-xgboost==1.5.2
 seaborn
 plotly
 ipython
-setuptools>=65
-wheel
+
+# force pkg_resources to exist
+setuptools==68.2.2
+wheel==0.41.3
+
+# use a newer xgboost that plays nicer with modern envs
+xgboost==1.7.6
